@@ -2,10 +2,10 @@ trigger OnOfEvents on Event (before insert) {
     If (Trigger.IsInsert){
         Integer MonthNumber = Date.Today().Month();
         Integer YearNumber = Date.Today().Year();
-        Integer MaxEvents = 4;
+        // Integer MaxEvents = 4;
         Event__mdt   metadataRecord = [SELECT Id, NoOfEvents__c FROM Event__mdt ];
         
-       // Integer MaxEvents = Integer.valueOf(metadataRecord.NoOfEvents__c);
+        Integer MaxEvents = Integer.valueOf(metadataRecord.NoOfEvents__c);
         
         Id Xuser = UserInfo.Getuserid();
         User Usr = [select name from user where id=:userinfo.getuserid() ];
@@ -16,11 +16,11 @@ trigger OnOfEvents on Event (before insert) {
         Map<Id,List<Event>> listUser=new Map<Id,List<Event>>();
         listUser.put(Xuser, LstEvents);
         
-        System.debug('---LstEvents--' + LstEvents.size());
+        System.debug('LstEvents: ' + LstEvents.size());
         
-        If (listUser.get(Xuser).Size()>MaxEvents)      
+        If (listUser.get(Xuser).Size() > MaxEvents)      
         {
-            Trigger.New[0].addError('Too many Events created this month for user '+Usr.Name+' ' +Xuser+' : 5');
+            Trigger.New[0].addError('Too many Events created this month for user '+Usr.Name+' ' +Xuser +' '+  MaxEvents);
         }
         
     }
